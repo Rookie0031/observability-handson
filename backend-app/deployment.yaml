@@ -5,7 +5,7 @@ metadata:
   labels:
     app: sample-nest-server
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: sample-nest-server
