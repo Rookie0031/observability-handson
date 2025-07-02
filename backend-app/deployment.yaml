@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-nest-server
+  labels:
+    app: sample-nest-server
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sample-nest-server
+  template:
+    metadata:
+      labels:
+        app: sample-nest-server
+    spec:
+      containers:
+      - name: sample-nest-server
+        image: rookie0031/sample-nest-server:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: "production"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5 
