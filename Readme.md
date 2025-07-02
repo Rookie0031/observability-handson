@@ -1,7 +1,7 @@
 ### 시작
 1. 도커 세팅에서 메모리 할당량을 늘려준다
 2.
-minikube start --memory=5000 --addons=default-storageclass,storage-provisioner,metrics-server
+minikube start --memory=6000 --addons=default-storageclass,storage-provisioner,metrics-server
 
 ## Observability 설치
 
@@ -65,5 +65,7 @@ ID: 1860 - 시스템 레벨 모니터링 (CPU, 메모리, 디스크, 네트워�
 ### jaeger
 
 helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
-helm install jaeger jaegertracing/jaeger --create-namespace --namespace monitoring
+helm install jaeger jaegertracing/jaeger --create-namespace --namespace monitoring --set strategy=allinone
 kubectl port-forward -n observability svc/jaeger-query 16686:16686
+
+설치 후 statefulset 개수 조절해줘야한다. 기다렷다가 2개로 올라가는데 그 때 1개로 낮춰줘야함.. 
