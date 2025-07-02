@@ -10,54 +10,48 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
 
+### Grafana + Loki
+
+# Grafana Helm 레포지토리 추가
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+
+# Loki 설치
+helm install loki grafana/loki-distributed -n monitoring
+
+# 프롬테일 설치
+helm upgrade --install promtail grafana/promtail \
+  --namespace monitoring \
+  --set "config.clients[0].url=http://loki-loki-distributed-gateway/loki/api/v1/push"
+
+# Grafana 설치
+
+helm install grafana grafana/grafana \
+  --namespace monitoring \
+  --set adminPassword=admin123
+
+kubectl --namespace monitoring port-forward service/grafana 3000:80
+
+#### loki 연결 설정
+datasource
+http://loki-loki-distributed-gateway
+
+
+기본 대시보드 임포트
+
+Dashboards → New → Import
+대시보드 ID 입력: 13639 (Kubernetes Logs Dashboard)
+Load → Loki 데이터소스 선택 → Import
+
+
+---
+
 ### Prometheus
 helm install prometheus prometheus-community/prometheus \
   --namespace monitoring \
   --set alertmanager.enabled=false \
   --set pushgateway.enabled=false
 
-### Grafana
-helm install grafana grafana/grafana \
-  --namespace monitoring
 
-### Loki
-helm upgrade --install loki grafana/loki-stack \
-  --set grafana.enabled=false \
-  --set prometheus.enabled=false \
-  --set promtail.enabled=true \
-  --namespace=monitoring \
-  --create-namespace
-
----
-
-## 포트포워드 후 대시보드 확인
-```
-kubectl port-forward -n monitoring svc/grafana 3000:80 &
-kubectl port-forward -n monitoring svc/prometheus-server 9090:80 &
-kubectl port-forward -n monitoring svc/loki 3100:3100 &
-```
-
-grafana 비번 확인
-kubectl get secret -n monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode
-
-grafana: http://localhost:3000
-prometheus: http://localhost:9090
-loki: http://localhost:3100/ready
-
----
-
-## 그라파나 데이터소스 연동
-
-Prometheus 데이터소스 추가
-
-Grafana 로그인 후 Configuration > Data Sources
-Add data source > Prometheus
+Grafana에서 프로메테우스 연동
 URL: http://prometheus-server:80
-Save & Test
-
-Loki 데이터소스 추가
-
-Configuration > Data Sources
-Add data source > Loki
-URL: http://loki:3100
-Save & Test
