@@ -61,18 +61,6 @@ kubectl get svc -n monitoring
 kubectl get pvc -n monitoring
 ```
 
-## Node Exporter 설치
-
-### 1. Node Exporter DaemonSet 설치
-```bash
-# Node Exporter 설치
-kubectl create ns monitoring
-helm install node-exporter prometheus-community/prometheus-node-exporter \
-  --namespace monitoring \
-  --set serviceMonitor.enabled=true
-```
-
-
 ## Prometheus 접근
 
 ### 1. 포트 포워딩으로 접근
