@@ -1,20 +1,20 @@
 ### 시작
-minikube start --memory=3000 --addons=default-storageclass,storage-provisioner
+1. 도커 세팅에서 메모리 할당량을 늘려준다
+2.
+minikube start --memory=5000 --addons=default-storageclass,storage-provisioner,metrics-server
 
 ## Observability 설치
 
 ### Helm 레포 추가
 kubectl create namespace monitoring
 kubectl config set-context --current --namespace=monitoring
+
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo add grafana https://grafana.github.io/helm-charts
+
 helm repo update
 
 ### Grafana + Loki
-
-# Grafana Helm 레포지토리 추가
-helm repo add grafana https://grafana.github.io/helm-charts
-helm repo update
 
 # Loki 설치
 helm install loki grafana/loki-distributed -n monitoring
@@ -25,7 +25,6 @@ helm upgrade --install promtail grafana/promtail \
   --set "config.clients[0].url=http://loki-loki-distributed-gateway/loki/api/v1/push"
 
 # Grafana 설치
-
 helm install grafana grafana/grafana \
   --namespace monitoring \
   --set adminPassword=admin123
@@ -55,3 +54,16 @@ helm install prometheus prometheus-community/prometheus \
 
 Grafana에서 프로메테우스 연동
 URL: http://prometheus-server:80
+
+#### Grafana에서 Import Dashboard
+Dashboard ID: 315 (Kubernetes cluster monitoring)
+ID: 11159 - Node.js 애플리케이션 종합 모니터링
+ID: 1860 - 시스템 레벨 모니터링 (CPU, 메모리, 디스크, 네트워크)
+
+---
+
+### jaeger
+
+helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+helm install jaeger jaegertracing/jaeger --create-namespace --namespace monitoring
+kubectl port-forward -n observability svc/jaeger-query 16686:16686
