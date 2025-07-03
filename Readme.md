@@ -25,9 +25,10 @@ helm upgrade --install promtail grafana/promtail \
   --set "config.clients[0].url=http://loki-loki-distributed-gateway/loki/api/v1/push"
 
 # Grafana 설치
-helm install grafana grafana/grafana \
+helm upgrade --install grafana grafana/grafana \
   --namespace monitoring \
-  --set adminPassword=admin123
+  --set adminPassword=admin123 \
+  --set env.GF_TRACING_JAEGER_ENABLED=false
 
 kubectl --namespace monitoring port-forward service/grafana 3000:80
 
@@ -62,10 +63,26 @@ ID: 1860 - 시스템 레벨 모니터링 (CPU, 메모리, 디스크, 네트워�
 
 ---
 
-### jaeger
+### Tempo
+미니큐브환경에서 자원사용량 한계 + 그라파나와의 integration 용이로 템포를 사용한다.
+helm upgrade --install tempo grafana/tempo
 
-helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
-helm install jaeger jaegertracing/jaeger --create-namespace --namespace monitoring --set strategy=allinone
-kubectl port-forward -n observability svc/jaeger-query 16686:16686
+그라파나에서 설정하기
+Configuration > Data Sources
+Add data source > Tempo
+URL: http://tempo:3200
 
-설치 후 statefulset 개수 조절해줘야한다. 기다렷다가 2개로 올라가는데 그 때 1개로 낮춰줘야함.. 
+
+# 포트포워딩
+kubectl port-forward svc/hotrod 8080:8080
+
+# 트래픽 생성 (다른 터미널)
+여기 접속해서 http://localhost:8080 테스트 버튼을 눌러보자 
+
+5. Grafana에서 트레이스 확인
+
+Grafana → Explore (나침반 아이콘)
+데이터소스를 Tempo로 선택
+Query type을 Search로 설정
+Run query 버튼 클릭
+트레이스 목록이 나타나면 클릭해서 상세 보기

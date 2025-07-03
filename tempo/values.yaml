@@ -1,0 +1,122 @@
+# tempo-values.yaml
+tempo:
+  # 기본 설정
+  repository: grafana/tempo
+  tag: "2.3.1"
+  
+  # 리소스 설정 (미니큐브용으로 낮춤)
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+# 스토리지 설정 (로컬 스토리지 사용)
+persistence:
+  enabled: true
+  size: 10Gi
+  storageClassName: "standard"  # 미니큐브 기본 스토리지클래스
+
+# 서비스 설정
+service:
+  type: ClusterIP
+  
+# Ingester 설정
+ingester:
+  replicas: 1
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+# Distributor 설정  
+distributor:
+  replicas: 1
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+# Query Frontend 설정
+queryFrontend:
+  replicas: 1
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+# Querier 설정
+querier:
+  replicas: 1
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+# Compactor 설정
+compactor:
+  replicas: 1
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+# 트레이싱 프로토콜 활성화
+config: |
+  multitenancy_enabled: false
+  usage_report:
+    reporting_enabled: false
+  compactor:
+    compaction:
+      block_retention: 1h
+  distributor:
+    receivers:
+      jaeger:
+        protocols:
+          thrift_http:
+            endpoint: 0.0.0.0:14268
+          grpc:
+            endpoint: 0.0.0.0:14250
+          thrift_binary:
+            endpoint: 0.0.0.0:6832
+          thrift_compact:
+            endpoint: 0.0.0.0:6831
+      zipkin:
+        endpoint: 0.0.0.0:9411
+      otlp:
+        protocols:
+          http:
+            endpoint: 0.0.0.0:4318
+          grpc:
+            endpoint: 0.0.0.0:4317
+      opencensus:
+        endpoint: 0.0.0.0:55678
+  ingester:
+    max_block_duration: 5m
+  server:
+    http_listen_port: 3200
+    log_level: info
+  storage:
+    trace:
+      backend: local
+      wal:
+        path: /var/tempo/wal
+      local:
+        path: /var/tempo/blocks
