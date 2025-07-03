@@ -1,10 +1,12 @@
 ## Getting Started
 ### 사전준비
 
-1. 혹시 모르니 도커 세팅에서 메모리 할당량을 늘려준다
+1. 시각화 도구로 k9s를 설치한다.
+
+2. 혹시 모르니 도커 세팅에서 메모리 할당량을 늘려준다
 <img width="965" alt="image" src="https://github.com/user-attachments/assets/368ff14e-b2d8-4b99-b455-5e3d123d290f" />
 
-2. 6기가 메모리 최대로 미니큐브를 실행한다.
+3. 6기가 메모리 최대로 미니큐브를 실행한다.
 ```
 minikube start --memory=6000 --addons=default-storageclass,storage-provisioner,metrics-server
 ```
@@ -52,13 +54,15 @@ kubectl --namespace monitoring port-forward service/grafana 3000:80
 datasource 설정하기
 http://loki-loki-distributed-gateway
 
+#### Log 수집 확인
+1. backend-app과 netshoot 배포
+2. netshoot의 readme를 따라 backend-app으로 요청을 날려 로그 생성
 
 기본 대시보드 임포트
 
 Dashboards → New → Import
 대시보드 ID 입력: 13639 (Kubernetes Logs Dashboard)
 Load → Loki 데이터소스 선택 → Import
-
 
 ---
 ## Metrics
