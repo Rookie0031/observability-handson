@@ -11,7 +11,6 @@ kubectl config set-context --current --namespace=monitoring
 
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo add grafana https://grafana.github.io/helm-charts
-
 helm repo update
 
 ### Grafana + Loki
@@ -30,10 +29,11 @@ helm upgrade --install grafana grafana/grafana \
   --set adminPassword=admin123 \
   --set env.GF_TRACING_JAEGER_ENABLED=false
 
+접속을 위한 포트포워드
 kubectl --namespace monitoring port-forward service/grafana 3000:80
 
 #### loki 연결 설정
-datasource
+datasource 설정하기
 http://loki-loki-distributed-gateway
 
 
@@ -46,14 +46,14 @@ Load → Loki 데이터소스 선택 → Import
 
 ---
 
-### Prometheus
+### Prometheus 설치
 helm install prometheus prometheus-community/prometheus \
   --namespace monitoring \
   --set alertmanager.enabled=false \
   --set pushgateway.enabled=false
 
 
-Grafana에서 프로메테우스 연동
+Grafana에서 프로메테우스 연동하기
 URL: http://prometheus-server:80
 
 #### Grafana에서 Import Dashboard
@@ -72,14 +72,16 @@ Configuration > Data Sources
 Add data source > Tempo
 URL: http://tempo:3200
 
+# 테스트 앱으로 tracing 트래픽 생성 (다른 터미널)
+tracer-sample-app 으로 이동 
+kubectl apply -f app.yaml 
 
-# 포트포워딩
+포드포워드하기!
 kubectl port-forward svc/hotrod 8080:8080
-
-# 트래픽 생성 (다른 터미널)
 여기 접속해서 http://localhost:8080 테스트 버튼을 눌러보자 
 
-5. Grafana에서 트레이스 확인
+
+## 5. Grafana에서 트레이스 확인
 
 Grafana → Explore (나침반 아이콘)
 데이터소스를 Tempo로 선택
