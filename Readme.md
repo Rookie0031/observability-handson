@@ -4,7 +4,7 @@
 1. 시각화 도구로 k9s를 설치한다.
 
 2. 혹시 모르니 도커 세팅에서 메모리 할당량을 늘려준다
-<img width="965" alt="image" src="https://github.com/user-attachments/assets/368ff14e-b2d8-4b99-b455-5e3d123d290f" />
+<img width="650" alt="image" src="https://github.com/user-attachments/assets/368ff14e-b2d8-4b99-b455-5e3d123d290f" />
 
 3. 6기가 메모리 최대로 미니큐브를 실행한다.
 ```
@@ -58,7 +58,12 @@ http://loki-loki-distributed-gateway
 1. backend-app과 netshoot 배포
 2. netshoot의 readme를 따라 backend-app으로 요청을 날려 로그 생성
 
-기본 대시보드 임포트
+#### explorer에서 살펴보기
+<img width="650" alt="image" src="https://github.com/user-attachments/assets/5b0fafed-0222-4d5e-9d1c-33297ffebfbf" />
+
+
+#### 추가 학습
+기본 대시보드 임포트해보기
 
 Dashboards → New → Import
 대시보드 ID 입력: 13639 (Kubernetes Logs Dashboard)
@@ -76,6 +81,10 @@ helm install prometheus prometheus-community/prometheus \
 
 Grafana에서 프로메테우스 연동하기
 URL: http://prometheus-server:80
+
+#### explorer에서 살펴보기
+<img width="650" alt="image" src="https://github.com/user-attachments/assets/0ce29e95-c21c-48f9-a243-6bc9a0987abf" />
+
 
 #### Grafana에서 Import Dashboard
 Dashboard ID: 315 (Kubernetes cluster monitoring)
