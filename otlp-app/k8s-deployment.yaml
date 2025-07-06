@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otlp-app
+  labels:
+    app: otlp-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otlp-app
+  template:
+    metadata:
+      labels:
+        app: otlp-app
+    spec:
+      containers:
+        - name: otlp-app
+          image: rookie0031/otlp-app:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://jaeger-collector.observability.svc.cluster.local:4318"
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: "http/protobuf"
+            - name: OTEL_SERVICE_NAME
+              value: "otlp-app"

@@ -1,0 +1,18 @@
+{
+  "name": "jaeger-thrift-app",
+  "version": "1.0.0",
+  "description": "Simple Jaeger SDK sample app",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "jaeger-client": "^3.19.0",
+    "axios": "^1.6.8"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+} 

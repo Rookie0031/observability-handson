@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger-thrift-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jaeger-thrift-app
+  template:
+    metadata:
+      labels:
+        app: jaeger-thrift-app
+    spec:
+      containers:
+      - name: jaeger-thrift-app
+        imagePullPolicy: Always
+        image: rookie0031/jaeger-thrift-app:latest
+        ports:
+        - containerPort: 3000
+        env:
+        # Jaeger Agent 설정 (UDP)
+        - name: JAEGER_AGENT_HOST
+          value: "jaeger-agent.observability.svc.cluster.local"
+        - name: JAEGER_AGENT_PORT
+          value: "6831"
+        # 샘플링 설정
+        - name: JAEGER_SAMPLER_TYPE
+          value: "const"
+        - name: JAEGER_SAMPLER_PARAM
+          value: "1"
+        # 서비스 이름
+        - name: JAEGER_SERVICE_NAME
+          value: "jaeger-thrift-app"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-thrift-app
+spec:
+  selector:
+    app: jaeger-thrift-app
+  ports:
+  - port: 3000
+    targetPort: 3000
+  type: NodePort 
